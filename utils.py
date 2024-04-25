@@ -14,8 +14,9 @@ def save_data(data: dict, filename: str)-> None:
     with open(filename, "w") as f:
         json.dump(data, f, indent=4)
         
-def save_backup(data: dict, date: str)-> None:
-    with open(f"./saves/{date}.json", "w") as f:
+def save_backup(data: dict, date: str, CUR_DIR:str)-> None:
+    json_directory = CUR_DIR / "saves" / f"{date}.json"
+    with open(json_directory, "w") as f:
         json.dump(data, f, indent=4)
 
 def add_set(data: dict, date: str, type: str, exercice: str, reps: int, weight: float)-> dict:

@@ -3,13 +3,17 @@ from PySide2.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QCombo
 from PySide2.QtGui import QIcon
 from PySide2.QtCore import QTimer
 import time
+from pathlib import Path
+
 
 from utils import get_date, extract_data, save_data, save_backup, add_set, get_data, get_all_exercices, get_types, get_exercices, get_save
 
 class App(QWidget):
     def __init__(self):
         super().__init__()
-        self.data = extract_data("./data.json")
+        self.CUR_DIR = Path(__file__).resolve().parent
+        self.json_file = self.CUR_DIR / "data.json"
+        self.data = extract_data(self.json_file)
         self.date = get_date()
         self.setWindowTitle("Workout Tracker")
         self.setIcon()
@@ -89,17 +93,17 @@ class App(QWidget):
         date = self.date_input.text()
         seance_type = self.cb_choice_seance2.currentText()
         exercice = self.cb_choice_exercice.currentText()
-        reps = int(self.rep_input.text())
-        weight = float(self.weight_input.text())
         try:
+            reps = int(self.rep_input.text())
+            weight = float(self.weight_input.text())
             add_set(self.data, date, seance_type, exercice, reps, weight)
             self.set_message(f"Données ajoutées pour l'exercice {exercice}", "green")
             
         except Exception as e:
             self.set_message(f"Erreur lors de l'ajout : {e}", "red")
             return
-        save_data(self.data, "./data.json")
-        save_backup(self.data, date)
+        save_data(self.data, self.json_file)
+        save_backup(self.data, date, self.CUR_DIR)
         self.rep_input.clear()
         self.weight_input.clear()
         self.display_data()
